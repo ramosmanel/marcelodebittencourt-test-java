@@ -65,6 +65,6 @@ public class HomePage {
     }
 
     public boolean estaLogado(String texto) {
-        return  texto.contentEquals(driver.findElement(By.cssSelector("#_desktop_user_info span.hidden-sm-down")).getText());
+        return texto.contentEquals(driver.findElement(By.cssSelector("#_desktop_user_info span.hidden-sm-down")).getText());
     }
 }

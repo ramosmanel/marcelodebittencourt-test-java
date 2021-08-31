@@ -2,6 +2,7 @@ package ecommercemarcelodebittencourt.tests;
 
 import ecommercemarcelodebittencourt.pageobjects.HomePage;
 import ecommercemarcelodebittencourt.pageobjects.LoginPage;
+import ecommercemarcelodebittencourt.pageobjects.ModalProdutoPage;
 import ecommercemarcelodebittencourt.pageobjects.ProdutoPage;
 import ecommercemarcelodebittencourt.setup.Driver;
 import org.junit.After;
@@ -11,6 +12,8 @@ import org.openqa.selenium.By;
 import org.openqa.selenium.WebDriver;
 import org.junit.Assert;
 import java.util.List;
+
+import static org.junit.Assert.assertTrue;
 
 public class HomePageTests {
 
@@ -85,16 +88,21 @@ public class HomePageTests {
         loginPage.clicarBotaoSignIn();
 
         //Validar se o usuário está logado corretamente
-        Assert.assertTrue(homepage.estaLogado("Portgas D. Ace"));
+        assertTrue(homepage.estaLogado("Portgas D. Ace"));
 
         //Voltar página inicial
         driver.findElement(By.cssSelector("[alt='Loja de Teste']")).click();
     }
-
+    ModalProdutoPage modalProdutoPage;
     @Test
     public void IncluirProdutoAoCarrinho() {
         homepage = new HomePage(driver);
         produtoPage = new ProdutoPage(driver);
+        modalProdutoPage = new ModalProdutoPage(driver);
+
+        String tamanhoProduto = "L";
+        String corProduto = "Black";
+        String quantidadeProduto = "2";
 
         //--Pré-condição
         //Usuário logado
@@ -112,7 +120,7 @@ public class HomePageTests {
         System.out.println(listaOpcoes.get(0));
         System.out.println("Tamanho da lista: " + listaOpcoes.size());
 
-        produtoPage.selecionarOpcaoDropdown("L");
+        produtoPage.selecionarOpcaoDropdown(tamanhoProduto);
         listaOpcoes = produtoPage.obterOpcoesSelecionadas();
 
         System.out.println(listaOpcoes.get(0));
@@ -122,11 +130,13 @@ public class HomePageTests {
         produtoPage.alterarCor();
 
         //Selecionar quantidade
-        String quantidade = "2";
-        produtoPage.alterarQuantidade(quantidade);
+        produtoPage.alterarQuantidade(quantidadeProduto);
 
         //Adicionar ao Carrinho
-        produtoPage.clicarAddToCart();
-    }
+        ModalProdutoPage modalProdutoPage = produtoPage.clicarAddToCart();
 
+        //Validações
+        assertTrue(modalProdutoPage.obterMensagemProdutoAdcionado().endsWith("Product successfully added to your shopping cart"));
+
+    }
 }

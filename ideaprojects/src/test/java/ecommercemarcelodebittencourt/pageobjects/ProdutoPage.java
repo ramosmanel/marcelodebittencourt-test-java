@@ -49,8 +49,9 @@ public class ProdutoPage {
         driver.findElement(By.id("quantity_wanted")).clear();
         driver.findElement(By.id("quantity_wanted")).sendKeys(quantidade);
     }
-    public void clicarAddToCart() {
+    public ModalProdutoPage clicarAddToCart() {
         driver.findElement(By.cssSelector(".add-to-cart")).click();
+        return new ModalProdutoPage(driver);
     }
 }
 

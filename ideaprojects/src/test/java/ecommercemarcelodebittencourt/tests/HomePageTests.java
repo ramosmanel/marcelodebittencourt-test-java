@@ -1,18 +1,14 @@
 package ecommercemarcelodebittencourt.tests;
 
-import ecommercemarcelodebittencourt.pageobjects.HomePage;
-import ecommercemarcelodebittencourt.pageobjects.LoginPage;
-import ecommercemarcelodebittencourt.pageobjects.ModalProdutoPage;
-import ecommercemarcelodebittencourt.pageobjects.ProdutoPage;
+import ecommercemarcelodebittencourt.pageobjects.*;
 import ecommercemarcelodebittencourt.setup.Driver;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebDriver;
-import org.junit.Assert;
 import java.util.List;
-
+import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 
 public class HomePageTests {
@@ -24,14 +20,14 @@ public class HomePageTests {
     @Before
     public void CriarDriver() {
         Driver wdriver = new Driver();
-        driver = wdriver.WebDriver();
+        this.driver = wdriver.WebDriver();
     }
 
     //Executado ao final de todos os processos de testes
     @After
     public void EncerrarDriver() {
-        //driver.close();
-        //driver.quit();
+        driver.close();
+        driver.quit();
     }
 
     //Campo de Testes
@@ -50,6 +46,7 @@ public class HomePageTests {
         homepage.carrinhoVazio(carrinhoValor);
     }
 
+    String nomeProduto_ProdutoPage;
     @Test
     public void DetalhesProduto() {
         int indice = 0;
@@ -61,15 +58,15 @@ public class HomePageTests {
         System.out.println(precoProduto_HomePage);
 
         ProdutoPage produtoPage = homepage.clicarProduto(indice);
-        String nomeProduto_ProdutoPage = produtoPage.obterNomeProduto();
+        nomeProduto_ProdutoPage = produtoPage.obterNomeProduto();
         String precoProduto_ProdutoPage = produtoPage.obterPrecoProduto();
 
         System.out.println(nomeProduto_ProdutoPage);
         System.out.println(precoProduto_ProdutoPage);
 
         //Validando nomes e preços
-        Assert.assertEquals(nomeProduto_HomePage.toUpperCase(),nomeProduto_ProdutoPage.toUpperCase());
-        Assert.assertEquals(precoProduto_HomePage.toUpperCase(), precoProduto_ProdutoPage.toUpperCase());
+        assertEquals(nomeProduto_HomePage.toUpperCase(),nomeProduto_ProdutoPage.toUpperCase());
+        assertEquals(precoProduto_HomePage.toUpperCase(), precoProduto_ProdutoPage.toUpperCase());
     }
 
     LoginPage loginPage;
@@ -98,11 +95,11 @@ public class HomePageTests {
     public void IncluirProdutoAoCarrinho() {
         homepage = new HomePage(driver);
         produtoPage = new ProdutoPage(driver);
-        modalProdutoPage = new ModalProdutoPage(driver);
+        modalProdutoPage  = new ModalProdutoPage(driver);
 
         String tamanhoProduto = "L";
         String corProduto = "Black";
-        String quantidadeProduto = "2";
+        int quantidadeProduto = 2;
 
         //--Pré-condição
         //Usuário logado
@@ -130,13 +127,46 @@ public class HomePageTests {
         produtoPage.alterarCor();
 
         //Selecionar quantidade
-        produtoPage.alterarQuantidade(quantidadeProduto);
+        produtoPage.alterarQuantidade(Integer.toString(quantidadeProduto));
 
         //Adicionar ao Carrinho
         ModalProdutoPage modalProdutoPage = produtoPage.clicarAddToCart();
 
         //Validações
         assertTrue(modalProdutoPage.obterMensagemProdutoAdcionado().endsWith("Product successfully added to your shopping cart"));
+        assertEquals(modalProdutoPage.obterTamanhoProduto(), tamanhoProduto);
+        assertEquals(modalProdutoPage.obterCorProduto(), corProduto);
+        assertEquals(modalProdutoPage.obterQuantidadeProduto(),Integer.toString(quantidadeProduto));
+
+        assertEquals(modalProdutoPage.obterDescricaoProduto().toLowerCase(), nomeProduto_ProdutoPage.toLowerCase());
+
+        String precoProdutoString = modalProdutoPage.obterPrecoProduto();
+        precoProdutoString = precoProdutoString.replace("$","");
+        Double precoProduto = Double.parseDouble(precoProdutoString);
+        System.out.println("Preço produto = " + precoProduto);
+
+        String subtotalString = modalProdutoPage.obterSubtotal();
+        subtotalString = subtotalString.replace("$","");
+        Double subtotal = Double.parseDouble(subtotalString);
+        System.out.println("Preço subtotal = " + subtotal);
+
+        Double subtotalCalculado = quantidadeProduto * precoProduto;
+        System.out.println(subtotalCalculado);
+        assertEquals(subtotal, subtotalCalculado);
+
+    }
+
+    CarrinhoPage carrinhoPage;
+    @Test
+    public void irParaCarrinho() {
+        //--Pré-condições
+        //Produto incluido na tela ModalProdutoPage
+        homepage = new HomePage(driver);
+        produtoPage = new ProdutoPage(driver);
+        modalProdutoPage  = new ModalProdutoPage(driver);
+
+        IncluirProdutoAoCarrinho();
+        carrinhoPage = modalProdutoPage.clicarBotaoProceedToCheckout();
 
     }
 }

@@ -3,7 +3,6 @@ package ecommercemarcelodebittencourt.pageobjects;
 import org.openqa.selenium.By;
 import org.openqa.selenium.NoSuchElementException;
 import org.openqa.selenium.WebDriver;
-import org.openqa.selenium.support.ui.ExpectedCondition;
 import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.openqa.selenium.support.ui.FluentWait;
 
@@ -21,5 +20,22 @@ public class ModalProdutoPage {
         wait.until(ExpectedConditions.visibilityOfElementLocated(By.id("myModalLabel")));
 
         return driver.findElement(By.id("myModalLabel")).getText();
+    }
+
+    public String obterDescricaoProduto() {return driver.findElement(By.className("product-name")).getText();}
+
+    public String obterPrecoProduto() {return driver.findElement(By.cssSelector("div.modal-body p.product-price")).getText();}
+
+    public String obterTamanhoProduto() {return driver.findElements(By.cssSelector("div.divide-right .col-md-6:nth-child(2) span strong")).get(0).getText();}
+
+    public String obterCorProduto() {return driver.findElements(By.cssSelector("div.divide-right .col-md-6:nth-child(2) span strong")).get(1).getText();}
+
+    public String obterQuantidadeProduto() {return driver.findElements(By.cssSelector("div.divide-right .col-md-6:nth-child(2) span strong")).get(2).getText();}
+
+    public String obterSubtotal(){return driver.findElement(By.cssSelector(".cart-content p:nth-child(2) span.value")).getText();}
+
+    public CarrinhoPage clicarBotaoProceedToCheckout() {
+       driver.findElement(By.cssSelector("div.cart-content-btn a.btn-primary")).click();
+       return new CarrinhoPage(driver);
     }
 }

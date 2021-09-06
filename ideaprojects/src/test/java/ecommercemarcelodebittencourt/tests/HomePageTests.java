@@ -2,6 +2,7 @@ package ecommercemarcelodebittencourt.tests;
 
 import ecommercemarcelodebittencourt.pageobjects.*;
 import ecommercemarcelodebittencourt.setup.Driver;
+import ecommercemarcelodebittencourt.util.Funcoes;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
@@ -30,8 +31,14 @@ public class HomePageTests {
         driver.quit();
     }
 
-    //Campo de Testes
+    //Globais
     HomePage homepage;
+    LoginPage loginPage;
+    ModalProdutoPage modalProdutoPage;
+    CarrinhoPage carrinhoPage;
+
+    //Campo de Testes
+
     @Test
     public void ContarProdutos() {
         int produtos = 8;
@@ -69,7 +76,6 @@ public class HomePageTests {
         assertEquals(precoProduto_HomePage.toUpperCase(), precoProduto_ProdutoPage.toUpperCase());
     }
 
-    LoginPage loginPage;
     @Test
     public void LoginValido() {
         homepage = new HomePage(driver);
@@ -90,7 +96,7 @@ public class HomePageTests {
         //Voltar página inicial
         driver.findElement(By.cssSelector("[alt='Loja de Teste']")).click();
     }
-    ModalProdutoPage modalProdutoPage;
+
     @Test
     public void IncluirProdutoAoCarrinho() {
         homepage = new HomePage(driver);
@@ -156,7 +162,21 @@ public class HomePageTests {
 
     }
 
-    CarrinhoPage carrinhoPage;
+    //Valores Esperados
+    String esperado_nomeProduto = "Hummingbird printed t-shirt";
+    Double esperado_precoProduto = 19.12;
+    String esperado_tamanhoProduto = "L";
+    String esperado_corProduto = "Black";
+    int esperado_input_quantidadeProduto = 2;
+    Double esperado_subtotalProduto = esperado_precoProduto * esperado_input_quantidadeProduto;
+
+    int esperado_numeroItensTotal = esperado_input_quantidadeProduto;
+    Double esperado_subtotalTotal = esperado_subtotalProduto;
+    Double esperado_shippingTotal = 7.00;
+    Double esperado_totalTaxExclTotal = esperado_subtotalTotal + esperado_shippingTotal;
+    Double esperado_totalIncTotal = esperado_totalTaxExclTotal;
+    Double esperado_taxes = 0.00;
+
     @Test
     public void irParaCarrinho() {
         //--Pré-condições
@@ -168,5 +188,39 @@ public class HomePageTests {
         IncluirProdutoAoCarrinho();
         carrinhoPage = modalProdutoPage.clicarBotaoProceedToCheckout();
 
+        //Testes
+        //Validar todos os elementos
+        System.out.println("*** TELA DO CARRINHO ***");
+
+        System.out.println(carrinhoPage.obter_nomeProduto());
+        System.out.println(Funcoes.removeCifraoDevolveDouble(carrinhoPage.obter_precoProduto()));
+        System.out.println(carrinhoPage.obter_tamanhoProduto());
+        System.out.println(carrinhoPage.obter_corProduto());
+        System.out.println(carrinhoPage.obter_input_quantidadeProduto());
+        System.out.println(Funcoes.removeCifraoDevolveDouble(carrinhoPage.obter_subtotalProduto()));
+
+        System.out.println("** ITENS TOTAIS **");
+
+        System.out.println(Funcoes.removeTextoItemsDevolveInt(carrinhoPage.obter_numeroItensTotal()));
+        System.out.println(Funcoes.removeCifraoDevolveDouble(carrinhoPage.obter_subtotalTotal()));
+        System.out.println(Funcoes.removeCifraoDevolveDouble(carrinhoPage.obter_shippingtotal()));
+        System.out.println(Funcoes.removeCifraoDevolveDouble(carrinhoPage.obter_totalTaxExclTotal()));
+        System.out.println(Funcoes.removeCifraoDevolveDouble(carrinhoPage.obter_totalTaxIncTotal()));
+        System.out.println(Funcoes.removeCifraoDevolveDouble(carrinhoPage.obter_taxes()));
+
+        //Asserções
+        assertEquals(esperado_nomeProduto, carrinhoPage.obter_nomeProduto());
+        assertEquals(esperado_precoProduto, Funcoes.removeCifraoDevolveDouble(carrinhoPage.obter_precoProduto()));
+        assertEquals(esperado_tamanhoProduto, carrinhoPage.obter_tamanhoProduto());
+        assertEquals(esperado_corProduto, carrinhoPage.obter_corProduto());
+        assertEquals(esperado_input_quantidadeProduto, Integer.parseInt(carrinhoPage.obter_input_quantidadeProduto()));
+        assertEquals(esperado_subtotalProduto, Funcoes.removeCifraoDevolveDouble(carrinhoPage.obter_subtotalProduto()));
+
+        assertEquals(esperado_numeroItensTotal,Funcoes.removeTextoItemsDevolveInt(carrinhoPage.obter_numeroItensTotal()));
+        assertEquals(esperado_subtotalTotal, Funcoes.removeCifraoDevolveDouble(carrinhoPage.obter_subtotalTotal()));
+        assertEquals(esperado_shippingTotal, Funcoes.removeCifraoDevolveDouble(carrinhoPage.obter_shippingtotal()));
+        assertEquals(esperado_totalTaxExclTotal, Funcoes.removeCifraoDevolveDouble(carrinhoPage.obter_totalTaxExclTotal()));
+        assertEquals(esperado_totalIncTotal, Funcoes.removeCifraoDevolveDouble(carrinhoPage.obter_totalTaxIncTotal()));
+        assertEquals(esperado_taxes, Funcoes.removeCifraoDevolveDouble(carrinhoPage.obter_taxes()));
     }
 }

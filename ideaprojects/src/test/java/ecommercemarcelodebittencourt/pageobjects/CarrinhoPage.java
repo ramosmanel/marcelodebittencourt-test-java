@@ -72,4 +72,8 @@ public class CarrinhoPage {
         return driver.findElement(By.cssSelector("div.cart-summary-totals div.cart-summary-line:nth-child(3) span.value")).getText();
     }
 
+    public CheckoutPage IrparaCheckoutPage() {
+        driver.findElement(By.cssSelector("[href='https://marcelodebittencourt.com/demoprestashop/order']")).click();
+        return new CheckoutPage(driver);
+    }
 }

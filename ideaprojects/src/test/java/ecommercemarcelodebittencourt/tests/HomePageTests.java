@@ -36,6 +36,7 @@ public class HomePageTests {
     LoginPage loginPage;
     ModalProdutoPage modalProdutoPage;
     CarrinhoPage carrinhoPage;
+    CheckoutPage checkoutPage;
 
     //Campo de Testes
 
@@ -177,8 +178,10 @@ public class HomePageTests {
     Double esperado_totalIncTotal = esperado_totalTaxExclTotal;
     Double esperado_taxes = 0.00;
 
+    String esperado_nomeCliente = "Portgas D. Ace";
+
     @Test
-    public void irParaCarrinho() {
+    public void IrParaCarrinho() {
         //--Pré-condições
         //Produto incluido na tela ModalProdutoPage
         homepage = new HomePage(driver);
@@ -223,4 +226,23 @@ public class HomePageTests {
         assertEquals(esperado_totalIncTotal, Funcoes.removeCifraoDevolveDouble(carrinhoPage.obter_totalTaxIncTotal()));
         assertEquals(esperado_taxes, Funcoes.removeCifraoDevolveDouble(carrinhoPage.obter_taxes()));
     }
+
+    @Test
+    public void IrparaCheckout() {
+        //Pré condições
+        //Produto disponível no carrinho de compras
+        irParaCarrinho();
+
+        //Teste
+
+        //Clicar no botão
+        checkoutPage = carrinhoPage.IrparaCheckoutPage();
+        //Preencher campos
+        //Validar informações
+        assertEquals(esperado_totalIncTotal, Funcoes.removeCifraoDevolveDouble(checkoutPage.obter_totalTaxIncTotal()));
+        //assertEquals(esperado_nomeCliente.toLowerCase(), checkoutPage.obter_nomeCliente().toLowerCase());
+        assertTrue(checkoutPage.obter_nomeCliente().startsWith(esperado_nomeCliente));
+        checkoutPage.clicarBotaoConfirmAddress();
+    }
+
 }

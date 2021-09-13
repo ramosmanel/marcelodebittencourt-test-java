@@ -37,6 +37,7 @@ public class HomePageTests {
     ModalProdutoPage modalProdutoPage;
     CarrinhoPage carrinhoPage;
     CheckoutPage checkoutPage;
+    PedidoPage pedidoPage;
 
     //Campo de Testes
 
@@ -179,6 +180,7 @@ public class HomePageTests {
     Double esperado_taxes = 0.00;
 
     String esperado_nomeCliente = "Portgas D. Ace";
+    String esperado_email = "acedospunhosbemquentinho@gmail.com";
 
     @Test
     public void IrParaCarrinho() {
@@ -231,7 +233,7 @@ public class HomePageTests {
     public void IrparaCheckout() {
         //Pré condições
         //Produto disponível no carrinho de compras
-        irParaCarrinho();
+        IrParaCarrinho();
 
         //Teste
 
@@ -243,6 +245,42 @@ public class HomePageTests {
         //assertEquals(esperado_nomeCliente.toLowerCase(), checkoutPage.obter_nomeCliente().toLowerCase());
         assertTrue(checkoutPage.obter_nomeCliente().startsWith(esperado_nomeCliente));
         checkoutPage.clicarBotaoConfirmAddress();
+
+        String encontrado_shippingValor = checkoutPage.obter_shippingValor();
+        encontrado_shippingValor = Funcoes.removeTexto(encontrado_shippingValor, " tax excl.");
+        Double encontrado_shippingValor_Double = Funcoes.removeCifraoDevolveDouble(encontrado_shippingValor);
+        assertEquals(encontrado_shippingValor_Double, esperado_shippingTotal);
+        checkoutPage.clicarBotaoContinueShipping();
+
+        //Selecionar opção "Pay By Check"
+        checkoutPage.selecionarRadioPayByCheck();
+
+        //Validar valor do cheque (amount)
+        String encontrado_amountPayByCheck = checkoutPage.obter_amountPayByCheck();
+        encontrado_amountPayByCheck = Funcoes.removeTexto(encontrado_amountPayByCheck, " (tax incl.)");
+        Double encontrado_amountPyByCheck_Double = Funcoes.removeCifraoDevolveDouble(encontrado_amountPayByCheck);
+        assertEquals(encontrado_amountPyByCheck_Double, esperado_totalIncTotal);
+
+        //Clicar no opção "I agree"
+        checkoutPage.clicarCheckboxIAgree();
+        assertTrue(checkoutPage.estaSelecionadoCheckboxIAgree());
+    }
+
+    @Test
+    public void finalizarPedido() {
+        //Pré-Condições
+        //Checkout completamente concluído
+        IrparaCheckout();
+
+        //Testes
+        //Clicar no botão para confirmar o pedido
+        pedidoPage = checkoutPage.clicarParaConfirmarPedido();
+        //Validar valores na tela
+        assertTrue(pedidoPage.obter_textoPedidoConfirmado().toUpperCase().endsWith("YOUR ORDER IS CONFIRMED"));
+        assertEquals(esperado_email, pedidoPage.obter_email());
+        assertEquals(esperado_subtotalProduto,pedidoPage.obter_totalProduto());
+        assertEquals(esperado_totalIncTotal, pedidoPage.obter_totalTaxIncl());
+        assertEquals("check", pedidoPage.obter_metodoPagamento());
     }
 
 }

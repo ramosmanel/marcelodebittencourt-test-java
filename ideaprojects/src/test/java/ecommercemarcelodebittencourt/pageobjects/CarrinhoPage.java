@@ -3,21 +3,6 @@ package ecommercemarcelodebittencourt.pageobjects;
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebDriver;
 
-/*
-By.cssSelector("div.product-line-info a"); - nome
-By.cssSelector("span.price"); - preço
-By.xpath("//div[contains(@class,'product-line-grid-body')]//div[3]/span[contains(@class.'value')]"); - tamanho
-By.xpath("//div[contains(@class,'product-line-grid-body')]//div[4]/span[contains(@class.'value')]"); - cor
-By.cssSelector("input.js-cart-line-product-quantity"); - Quantidade
-By.cssSelector("span.product-price strong"); - subtotal
-By.cssSelector("span.js-subtotal"); - Número de itens no total
-By.cssSelector("#cart-subtotal-products span.value"); - Subtotal Total
-By.cssSelector("#cart-subtotal-shipping span.value"); - Shipping total
-By.cssSelector("div.cart-summary-totals div.cart-summary-line:nth-child(1) span.value"); - TotalTaxExclTotal
-By.cssSelector("div.cart-summary-totals div.cart-summary-line:nth-child(2) span.value"); - TotalTaxIncTotal
-By.cssSelector("div.cart-summary-totals div.cart-summary-line:nth-child(3) span.value"); - Taxes
- */
-
 public class CarrinhoPage {
     private WebDriver driver;
     public CarrinhoPage(WebDriver driver){

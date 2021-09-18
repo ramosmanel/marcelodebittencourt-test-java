@@ -15,7 +15,6 @@ import static org.junit.Assert.assertTrue;
 public class HomePageTests {
 
     private WebDriver driver;
-    private ProdutoPage produtoPage;
 
     //Executado anterior a todos os processos de testes
     @Before
@@ -33,6 +32,7 @@ public class HomePageTests {
 
     //Globais
     HomePage homepage;
+    ProdutoPage produtoPage;
     LoginPage loginPage;
     ModalProdutoPage modalProdutoPage;
     CarrinhoPage carrinhoPage;

@@ -17,20 +17,19 @@ public class HomePage {
         PageFactory.initElements(driver, this);
         this.driver = driver;
     }
-
-    public void contarProdutos(int produtos) {
+    public int contarProdutos(int produtos) {
         listaProdutos = driver.findElements(By.className("product-description"));
         System.out.println("Número de produtos: " + listaProdutos.size());
 
         boolean result = false;
             if(listaProdutos.size() == produtos) {
-                System.out.println("Teste Aprovado!");
                 result = true;
             }
         Assert.assertTrue(result);
+        return produtos;
     }
 
-    public void carrinhoVazio(int carrinhoValor) {
+    public int carrinhoVazio(int carrinhoValor) {
         String valorCarrinho = driver.findElement(By.className("cart-products-count")).getText();
         valorCarrinho = valorCarrinho.replace("(", "");
         valorCarrinho = valorCarrinho.replace(")", "");
@@ -43,6 +42,7 @@ public class HomePage {
             result = true;
         }
         Assert.assertTrue(result);
+        return carrinhoValor;
     }
 
     public String obterNomeProduto(int indice) {
@@ -67,4 +67,17 @@ public class HomePage {
     public boolean estaLogado(String texto) {
         return texto.contentEquals(driver.findElement(By.cssSelector("#_desktop_user_info span.hidden-sm-down")).getText());
     }
+
+    public void carregarPaginaInicial() {
+        driver.get("https://marcelodebittencourt.com/demoprestashop/");
+    }
+
+    public String obterTituloPagina() {
+        return driver.getTitle();
+    }
+
+    public boolean estaLogado() {
+        return !"Sign in".contentEquals(driver.findElement(By.cssSelector("#_desktop_user_info span.hidden-sm-down")).getText());
+    }
+
 }

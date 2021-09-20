@@ -1,6 +1,7 @@
 package ecommercemarcelodebittencourt.cucumber.steps;
 import ecommercemarcelodebittencourt.pageobjects.HomePage;
 import ecommercemarcelodebittencourt.pageobjects.LoginPage;
+import ecommercemarcelodebittencourt.pageobjects.ModalProdutoPage;
 import ecommercemarcelodebittencourt.pageobjects.ProdutoPage;
 import io.cucumber.java.pt.Dado;
 import io.cucumber.java.pt.Quando;
@@ -9,6 +10,8 @@ import io.cucumber.java.Before;
 import io.cucumber.java.After;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.chrome.ChromeDriver;
+
+import java.util.List;
 import java.util.concurrent.TimeUnit;
 
 
@@ -25,6 +28,7 @@ public class ComprarProdutosSteps {
     HomePage homePage;
     LoginPage loginPage;
     ProdutoPage produtoPage;
+    ModalProdutoPage modalProdutoPage;
 
 
     //Valores válidos
@@ -34,6 +38,8 @@ public class ComprarProdutosSteps {
     //Variáveis
     String nomeProduto_ProdutoPage;
     String precoProduto_ProdutoPage;
+    String nomeProduto_HomePage;
+    String precoProduto_HomePage;
 
     @Before
     public void inicializar() {
@@ -96,8 +102,8 @@ public class ComprarProdutosSteps {
         homePage = new HomePage(driver);
         produtoPage = new ProdutoPage(driver);
 
-        String nomeProduto_HomePage = homePage.obterNomeProduto(indice);
-        String precoProduto_HomePage = homePage.obterPrecoProduto(indice);
+        nomeProduto_HomePage = homePage.obterNomeProduto(indice);
+        precoProduto_HomePage = homePage.obterPrecoProduto(indice);
 
         System.out.println(nomeProduto_HomePage);
         System.out.println(precoProduto_HomePage);
@@ -109,29 +115,79 @@ public class ComprarProdutosSteps {
 
     }
 
-    @Quando("nome do produto na tela principal eh {string}")
-    public void nome_do_produto_na_tela_principal_eh(String string) {
-        // Write code here that turns the phrase above into concrete actions
-        throw new io.cucumber.java.PendingException();
+    @Quando("nome do produto na tela principal e na tela produto eh {string}")
+    public void nome_do_produto_na_tela_principal_eh(String nomeProduto) {
+        assertThat(nomeProduto_HomePage.toUpperCase(),is(nomeProduto.toUpperCase()));
+        assertThat(nomeProduto_ProdutoPage.toUpperCase(), is(nomeProduto_ProdutoPage.toUpperCase()));
     }
 
-    @Quando("preco do produto na tela principal eh {string}")
-    public void preco_do_produto_na_tela_principal_eh(String string) {
-        // Write code here that turns the phrase above into concrete actions
-        throw new io.cucumber.java.PendingException();
+    @Quando("preco do produto na tela principal e na tela produto eh {string}")
+    public void preco_do_produto_na_tela_principal_eh(String precoProduto) {
+        assertThat(precoProduto_HomePage,is(precoProduto));
+        assertThat(precoProduto_ProdutoPage, is(precoProduto_ProdutoPage));
     }
 
     @Quando("adiciono produto no carrinho com tamanho {string} cor {string} e quantidade {int}")
-    public void adiciono_produto_no_carrinho_com_tamanho_cor_e_quantidade(String string, String string2, Integer int1) {
-        // Write code here that turns the phrase above into concrete actions
-        throw new io.cucumber.java.PendingException();
+    public void adiciono_produto_no_carrinho_com_tamanho_cor_e_quantidade(String tamanhoProduto, String corProduto, Integer quantidadeProduto) {
+        homePage = new HomePage(driver);
+        produtoPage = new ProdutoPage(driver);
+        modalProdutoPage  = new ModalProdutoPage(driver);
+
+        //Selecionar Tamanho
+        List<String> listaOpcoes = produtoPage.obterOpcoesSelecionadas();
+
+        System.out.println(listaOpcoes.get(0));
+        System.out.println("Tamanho da lista: " + listaOpcoes.size());
+
+        produtoPage.selecionarOpcaoDropdown(tamanhoProduto);
+        listaOpcoes = produtoPage.obterOpcoesSelecionadas();
+
+        System.out.println(listaOpcoes.get(0));
+        System.out.println("Tamanho da lista: " + listaOpcoes.size());
+
+        //Selecionar Cor
+        if (!corProduto.equals("N/A"))
+            produtoPage.alterarCor();
+
+        //Selecionar quantidade
+        produtoPage.alterarQuantidade(Integer.toString(quantidadeProduto));
+
+        //Adicionar ao Carrinho
+        modalProdutoPage = produtoPage.clicarAddToCart();
+
+        //Validações
+        assertThat(modalProdutoPage.obterMensagemProdutoAdcionado().
+                endsWith("Product successfully added to your shopping cart"), is(true));
+        assertThat(modalProdutoPage.obterCorProduto(), is(corProduto));
+        assertThat(modalProdutoPage.obterTamanhoProduto(), is(tamanhoProduto));
+
+        int quantidadeProdutoInt = Integer.parseInt(modalProdutoPage.obterQuantidadeProduto());
+        assertThat(quantidadeProdutoInt, is(quantidadeProduto));
+
+
     }
 
     //Resultados esperados
     @Entao("o produto aparece na confirmacao com nome {string} preco {string} tamanho {string} cor {string} e quantidade {int}")
-    public void o_produto_aparece_na_confirmacao_com_nome_preco_tamanho_cor_e_quantidade(String string, String string2, String string3, String string4, Integer int1) {
-        // Write code here that turns the phrase above into concrete actions
-        throw new io.cucumber.java.PendingException();
+    public void o_produto_aparece_na_confirmacao_com_nome_preco_tamanho_cor_e_quantidade(String nomeProduto, String precoProduto, String tamanhoProduto, String corProduto ,Integer quantidadeProduto) {
+
+        assertThat(modalProdutoPage.obterDescricaoProduto().toUpperCase(), is(nomeProduto.toUpperCase()));
+
+        Double precoProdutoDoubleEncontrado = Double.parseDouble(modalProdutoPage.obterPrecoProduto().replace("$",""));
+
+        assertThat(modalProdutoPage.obterTamanhoProduto(), is(tamanhoProduto));
+        if(!precoProduto.equals("N/A"))
+            assertThat(modalProdutoPage.obterCorProduto(), is(corProduto));
+        int quantidadeProdutoEsperada = Integer.parseInt(modalProdutoPage.obterQuantidadeProduto());
+        assertThat(quantidadeProdutoEsperada, is(quantidadeProduto));
+
+        String subtotalString = modalProdutoPage.obterSubtotal();
+        subtotalString = subtotalString.replace("$","");
+        Double subtotalEsperado = Double.parseDouble(subtotalString);
+
+        Double subtotalCalculadoEsperado = quantidadeProduto * precoProdutoDoubleEncontrado;
+        assertThat(subtotalCalculadoEsperado, is(subtotalEsperado));
+
     }
 
 

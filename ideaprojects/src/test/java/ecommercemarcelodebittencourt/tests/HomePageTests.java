@@ -132,7 +132,8 @@ public class HomePageTests {
         System.out.println("Tamanho da lista: " + listaOpcoes.size());
 
         //Selecionar Cor
-        produtoPage.alterarCor();
+        if(!corProduto.equals("N/A"))
+            produtoPage.alterarCor();
 
         //Selecionar quantidade
         produtoPage.alterarQuantidade(Integer.toString(quantidadeProduto));

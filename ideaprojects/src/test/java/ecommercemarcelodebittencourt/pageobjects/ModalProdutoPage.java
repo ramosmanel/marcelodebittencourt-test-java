@@ -10,6 +10,7 @@ import java.time.Duration;
 
 public class ModalProdutoPage {
     private WebDriver driver;
+    private By listaValoresInformados = By.cssSelector("div.divide-right .col-md-6:nth-child(2) span strong");
 
     public ModalProdutoPage(WebDriver driver){this.driver = driver;}
 
@@ -28,9 +29,19 @@ public class ModalProdutoPage {
 
     public String obterTamanhoProduto() {return driver.findElements(By.cssSelector("div.divide-right .col-md-6:nth-child(2) span strong")).get(0).getText();}
 
-    public String obterCorProduto() {return driver.findElements(By.cssSelector("div.divide-right .col-md-6:nth-child(2) span strong")).get(1).getText();}
+    public String obterCorProduto() {
+        if(driver.findElements(listaValoresInformados).size() == 3)
+            return driver.findElements(listaValoresInformados).get(1).getText();
+        else
+            return "N/A";
+    }
 
-    public String obterQuantidadeProduto() {return driver.findElements(By.cssSelector("div.divide-right .col-md-6:nth-child(2) span strong")).get(2).getText();}
+    public String obterQuantidadeProduto() {
+        if(driver.findElements(listaValoresInformados).size() == 3)
+            return driver.findElements(By.cssSelector("div.divide-right .col-md-6:nth-child(2) span strong")).get(2).getText();
+        else
+            return driver.findElements(listaValoresInformados).get(1).getText();
+    }
 
     public String obterSubtotal(){return driver.findElement(By.cssSelector(".cart-content p:nth-child(2) span.value")).getText();}
 

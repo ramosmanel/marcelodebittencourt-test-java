@@ -3,14 +3,20 @@ import ecommercemarcelodebittencourt.pageobjects.HomePage;
 import ecommercemarcelodebittencourt.pageobjects.LoginPage;
 import ecommercemarcelodebittencourt.pageobjects.ModalProdutoPage;
 import ecommercemarcelodebittencourt.pageobjects.ProdutoPage;
+import io.cucumber.java.Scenario;
 import io.cucumber.java.pt.Dado;
 import io.cucumber.java.pt.Quando;
 import io.cucumber.java.pt.Entao;
 import io.cucumber.java.Before;
 import io.cucumber.java.After;
+import io.cucumber.messages.internal.com.google.common.io.Files;
+import org.openqa.selenium.OutputType;
+import org.openqa.selenium.TakesScreenshot;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.chrome.ChromeDriver;
 
+import java.io.File;
+import java.io.IOException;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
 
@@ -43,7 +49,7 @@ public class ComprarProdutosSteps {
 
     @Before
     public void inicializar() {
-        System.setProperty("webdriver.chrome.driver", "C:\\Users\\Pichau\\drivers\\chromedriver.exe");
+        System.setProperty("webdriver.chrome.driver", "C:\\Users\\Pichau\\drivers\\chromedriver(94).exe");
         driver = new ChromeDriver();
         driver.manage().timeouts().implicitlyWait(10,TimeUnit.SECONDS);
     }
@@ -190,8 +196,25 @@ public class ComprarProdutosSteps {
 
     }
 
+    @After(order = 1)
+    public void capturarTela(Scenario scenario) {
+        TakesScreenshot camera = (TakesScreenshot) driver;
+        File capturaDeTela = camera.getScreenshotAs(OutputType.FILE);
 
-    @After
+        String scenarioId = scenario.getId().substring(scenario.getId().lastIndexOf(".feature:") + 9);
+        String nomeArquivo = "src/test/java/ecommercemarcelodebittencourt/screenshots/" + scenarioId + "_" + scenario.getStatus() + ".png";
+        System.out.println(nomeArquivo);
+
+        try {
+            Files.move(capturaDeTela, new File(nomeArquivo));
+        }
+        catch (IOException e){
+            e.printStackTrace();
+        }
+    }
+
+
+    @After(order = 0)
     public void Finalizar() {
         driver.close();
         driver.quit();

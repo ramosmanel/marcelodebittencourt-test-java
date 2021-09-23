@@ -24,3 +24,4 @@ Funcionalidade: Comprar produtos
   |posicao| precoProduto | tamanhoProduto | corProduto | quantidadeProduto |          nomeProduto         |
   |   0   |   "$19.12"   |      "L"       |  "Black"   |         2         |"Hummingbird Printed T-Shirt" |
   |   1   |   "$28.72"   |      "XL"      |   "N/A"    |         3         |"Hummingbird Printed Sweater" |
+

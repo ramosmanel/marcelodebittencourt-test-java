@@ -8,7 +8,7 @@ import java.util.concurrent.TimeUnit;
 public class Driver {
     public WebDriver WebDriver() {
         //Informar referência do driver...
-        System.setProperty("webdriver.chrome.driver", "C:\\Users\\Pichau\\drivers\\chromedriver.exe");
+        System.setProperty("webdriver.chrome.driver", "C:\\Users\\Pichau\\drivers\\chromedriver(94).exe");
         WebDriver driver = new ChromeDriver();
         driver.get("https://marcelodebittencourt.com/demoprestashop/");
         driver.manage().timeouts().implicitlyWait(10, TimeUnit.SECONDS);
